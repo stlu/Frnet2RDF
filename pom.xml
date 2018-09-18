@@ -1,0 +1,97 @@
+<project 
+	xmlns="http://maven.apache.org/POM/4.0.0" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <groupId>it.unibo.cs</groupId>
+  <artifactId>Frnet2RDF</artifactId>
+  <version>0.0.1</version>
+  <packaging>jar</packaging>
+  <name>Frnet2RDF</name>
+  <description>from frameNet to RDF using premon, jena and ukb</description>
+  
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+		
+	<!-- Apache Jena -->
+	<dependency>
+		<groupId>org.apache.jena</groupId>
+		<artifactId>apache-jena-libs</artifactId>
+		<type>pom</type>
+		<version>3.2.0</version>
+	</dependency>
+	
+	<!-- Commons configuration -->
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-configuration2</artifactId>
+		<version>2.3</version>
+	</dependency>
+	<dependency>
+		<groupId>commons-beanutils</groupId>
+		<artifactId>commons-beanutils</artifactId>
+		<version>1.9.3</version>
+	</dependency>
+
+	<!-- Logging LOG4J - SLF4J -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-jdk14</artifactId>
+		<version>1.7.7</version>
+	</dependency>
+	
+	<!-- NLP Stanford -->
+	<dependency>
+	    <groupId>edu.stanford.nlp</groupId>
+	    <artifactId>stanford-corenlp</artifactId>
+	    <version>3.9.1</version>
+	</dependency>
+	<dependency>
+	    <groupId>edu.stanford.nlp</groupId>
+	    <artifactId>stanford-corenlp</artifactId>
+	    <version>3.9.1</version>
+	    <classifier>models</classifier>
+	</dependency>
+	<dependency>
+	    <groupId>edu.stanford.nlp</groupId>
+	    <artifactId>stanford-corenlp</artifactId>
+	    <version>3.9.1</version>
+    	<classifier>models-english</classifier>
+    </dependency>
+	
+  </dependencies>
+  
+   <build>
+        <plugins>
+            <plugin>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <version>3.2</version>
+		        <configuration>
+		            <source>1.8</source>
+		            <target>1.8</target>
+		        </configuration>
+		    </plugin>
+		    <plugin>  
+			   <groupId>org.codehaus.mojo</groupId>  
+			   <artifactId>exec-maven-plugin</artifactId>  
+			   <version>1.6.0</version>  
+			   
+			     <configuration>  
+			       <mainClass>it.unibo.cs.Frnet2RDF.UKB</mainClass>
+				     <arguments>  
+						<argument>config.properties</argument>   
+					 </arguments>  
+			     </configuration>  
+			     
+			</plugin>  
+		    
+        </plugins>
+    </build>
+
+</project>
