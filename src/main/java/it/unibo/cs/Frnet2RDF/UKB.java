@@ -43,7 +43,7 @@ public class UKB  {
 	// ctx_3 w21  02700029-a/0.617999 09937688-n/0.201255 02700199-a/0.093806 02177397-a/0.0869394 !! colonial
 	private Pattern resultPattern = Pattern.compile(" (\\S+)/(\\S+) "); // 
 	
-	private String flags = " --ppr --nopos --allranks";
+	private String flags = " --ppr --allranks";  // --nopos
 	private String tempFile;
 	private String defaultNamespacePrefixData;
 	private boolean wn30 = false, wn31 = false;
@@ -181,6 +181,7 @@ public class UKB  {
 		
         StfdLemmatizer slem = new StfdLemmatizer();
         List<List<NLPnode>> nlpnodes; 
+        List<List<NLPnode>> ncnods;
         StringBuilder sb = new StringBuilder();
         int n_sent = 0;
         
@@ -202,37 +203,44 @@ public class UKB  {
         	    	
         	    	// Convert and skip some kind of token
         	    	String upos = convPOStoUKB(pos);
+        	    	//System.out.println("Nodo "+nod.toString()+"\n\t "+upos);
         	    	if (upos.equals("SKIP")) continue;
+        	    	if (upos.equals("")) continue;
         	    	
         	    	// Save only node to wsd
         	    	fr.addTokens(ctxStr, nod );
         	    	//System.out.println("POS "+pos);
+   	
+        	    	if (upos.equals("")) continue;
         	    	
             		String word = nod.getLemma();
             		sb.append(word.replace(' ', '_'));
-         			sb.append("#");         // POS
+         			sb.append("#"+upos);    // POS
          			sb.append("#w" + i++);  // word identifier
          			sb.append("#1 ");       // 1 means disambiguate the word 	 
             	}
-        	}
+        	    
+        	    // Determine context from frame's name
+        	    String frameName = fr.getFrame().substring(47); // https://w3id.org/framester/framenet/abox/frame/
+        	    ncnods = slem.lemmatize(frameName);
+        	    NLPnode ctxnod = ncnods.get(0).get(0);
+        	    String word = ctxnod.getLemma();
+        	    String ctxpos = ctxnod.getPos();
+        	    String uctxpos = convPOStoUKB(ctxpos);
+        	    //System.out.println("CONTEXTNodo "+ctxnod.toString());
+				
+        	    sb.append(word.replace(' ', '_'));
+				sb.append("#"+uctxpos);      // POS
+				sb.append("#c" + i++);       // word identifier
+				sb.append("#0 ");            // 0 means do not disambiguate the word
+				ncnods.clear();
+        	} 
+        	
         	// reset nlpnodes
-        	nlpnodes.clear(); 
+        	nlpnodes.clear();  
         	sb.append("\n");
         }
         	
-  /**      
-
-		if (context != null) {
-			List<PointerRange> contextTokens = Parser.tokenize(context);
-			for (PointerRange tw : contextTokens) {
-				String word = tw.getContent();
-				word = l.getLemma(word);
-				sb.append(word.replace(' ', '_'));
-				sb.append("#"); // no pos
-				sb.append("#c" + i++); // word identifier
-				sb.append("#0 "); // 0 means do not disambiguate the word
-			}
-		} **/
         System.out.println(sb.toString());
 		return sb.toString();
 	}
@@ -327,7 +335,8 @@ public class UKB  {
 		ukb.disambiguate(exfr, true);  // true examine all rank, false only the biggest
 		
 		for (ExampleFrame frame : exfr) {
-			System.out.println(frame.getContent());
+			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
+			System.out.println("\t"+frame.getFrame()+"\n");
 			
 			Set<String> ctxs = frame.getDenotedSenses().keySet();
 			Collection<List <NLPnode>> nn = frame.getDenotedSenses().values();
