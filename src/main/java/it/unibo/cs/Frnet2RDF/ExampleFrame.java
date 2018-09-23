@@ -13,8 +13,10 @@ public class ExampleFrame {
 	
 	private String name;    //name example rdf
 	private String content;	//sentences
-	private String frame;  // name frame rdf 
-	private Map<String, List<NLPnode> >  nodes_wsd; // ctx_xx, sentence analized 
+	private String frame;   // name frame rdf 
+	private String ctx;     // string context for ukb
+	private List<NLPnode>  nodes_wsd; // sentence analized 
+	private List<Integer>  synsets;   // index of nodes_wsd
 	
 	public int hashCode() {
 	   return Objects.hashCode(name);
@@ -32,7 +34,8 @@ public class ExampleFrame {
 		this.name = n;
 		this.content = l;
 		this.frame = f;
-		this.nodes_wsd = new HashMap<>();
+		this.nodes_wsd = new ArrayList();
+		this.synsets = new ArrayList();
 	}
 	
 	public String getName() {
@@ -47,25 +50,62 @@ public class ExampleFrame {
         return this.frame;
     }
     
-    public void addTokens(String ctx, NLPnode nod) {
-		if (!this.nodes_wsd.containsKey(ctx)) {
-			this.nodes_wsd.put(ctx, new ArrayList<>());
-		}
-		//System.out.println(" addTokens " + this.content+" ==> ctx "+ctx);
-		this.nodes_wsd.get(ctx).add(nod);
+    public String getCtx() {
+        return this.ctx;
+    }
+    
+    public void setCtx(String ctNum) {
+        this.ctx = ctNum;
+    }
+    
+    public void addTokens(NLPnode nod) {
+		//System.out.println(" addTokens  ==> "+this.ctx +" nod "+nod.toString());
+		this.nodes_wsd.add(nod);
+		this.setPrincipalSynsets();
     }
    
-    public boolean containsCtx(String ctx) {
-        return this.nodes_wsd.containsKey(ctx);
+    public boolean containsCtx(String ctNum) {
+        return this.ctx.equals(ctNum);
     }
     
-    public void addSenseScore(String ctx, Integer id, String sen, Double score) {
-    	if (this.nodes_wsd.containsKey(ctx)) {
-    	  this.nodes_wsd.get(ctx).get(id).setSense(sen,score); 
-    	}
+    public void addSenseScore(Integer id, String sen, Double score) {
+    	this.nodes_wsd.get(id).setSense(sen,score); 
     }
     
-    public Map<String, List<NLPnode>> getDenotedSenses() {
+    public List<NLPnode> getDenotedSenses() {
     	return this.nodes_wsd;
+    }
+    
+    public List<Integer> getSynsets() {
+    	return this.synsets;
+    }
+    
+    public NLPnode getNodeNum(Integer id) {
+    	return this.nodes_wsd.get(id);
+    }
+    /**
+     * Find principals synset 
+     */
+    private void setPrincipalSynsets() {
+    	
+    	for(int i = 0; i < this.nodes_wsd.size(); i++) {
+    		String speach = this.nodes_wsd.get(i).getPos();
+    	
+			switch (speach) {
+				case "VB" : // Verb, base form
+				case "VBD" : // Verb, past tense
+				case "VBG" : // Verb, gerund or present participle
+				case "VBN" : // Verb, past participle
+				case "VBP" : // Verb, non­3rd person singular present
+				case "VBZ" : // Verb, 3rd person singular present
+				case "MD"  : // Modal
+					if (!this.synsets.contains(i)) {
+						this.synsets.add(i);
+					}
+					break;
+				default:
+					break;
+			}
+    	}
     }
 }

@@ -15,7 +15,7 @@ public class ReadConfiguration {
 		SPARQL_ENDPOINT, TTL_FILE, NT_FILE
 	}
 
-	private String input, outputFormat;
+	private String input, outputFile, outputFormat;
 	private String ukb_wsd = "bin/ukb_wsd";
 	private String lkb_graph_bin_filepath = "lkb/wn30.bin";
 	private String lkb_dict_filepath = "lkb/wnet30_dict.txt";
@@ -30,42 +30,38 @@ public class ReadConfiguration {
 		if (configFile != null) {
 			CONFIG_FILE = configFile;
 		}
-		
-		//try {
-		    Configurations configs = new Configurations();
-			Configuration config = configs.properties(configFile);
+	
+	    Configurations configs = new Configurations();
+		Configuration config = configs.properties(configFile);
 
-			input = config.getString("input");
-			outputFormat = config.getString("outputFormat");
-			
-			String inputT = config.getString("inputType");
-			if (inputT.equalsIgnoreCase("SPARQL")) {
-				inputType = InputType.SPARQL_ENDPOINT;
-			} else if (inputT.equalsIgnoreCase("TTL")) {
-				inputType = InputType.TTL_FILE;
-			} else if (inputT.equalsIgnoreCase("NT")) {
-				inputType = InputType.NT_FILE;
-			}
-			
-			ukb_wsd = config.getString("textdisambiguation.ukb_wsd");
-			lkb_graph_bin_filepath = config
-					.getString("textdisambiguation.lkb_graph_bin_filepath");
-			lkb_dict_filepath = config
-					.getString("textdisambiguation.lkb_dict_filepath");
-			wordnet_version = config
-					.getString("textdisambiguation.wordnet_version");
-			
-			logger.trace("Configuration: ukb_wsd:" + ukb_wsd
-					+ ", lkb_graph_bin_filepath:" + lkb_graph_bin_filepath
-					+ ", lkb_dict_filepath:" + lkb_dict_filepath
-					+ ", wordnet_version:" + wordnet_version);
-			
-			namespacePrefixData = config.getString("prefixdata");
-			tempFile = config.getString("textdisambiguation.file");
-			
-		//} catch (ConfigurationException e) {
-		//	e.printStackTrace();
-		//}
+		input = config.getString("input");
+		outputFile = config.getString("outputFile");
+		outputFormat = config.getString("outputFormat");
+		
+		String inputT = config.getString("inputType");
+		if (inputT.equalsIgnoreCase("SPARQL")) {
+			inputType = InputType.SPARQL_ENDPOINT;
+		} else if (inputT.equalsIgnoreCase("TTL")) {
+			inputType = InputType.TTL_FILE;
+		} else if (inputT.equalsIgnoreCase("NT")) {
+			inputType = InputType.NT_FILE;
+		}
+		
+		ukb_wsd = config.getString("textdisambiguation.ukb_wsd");
+		lkb_graph_bin_filepath = config
+				.getString("textdisambiguation.lkb_graph_bin_filepath");
+		lkb_dict_filepath = config
+				.getString("textdisambiguation.lkb_dict_filepath");
+		wordnet_version = config
+				.getString("textdisambiguation.wordnet_version");
+		
+		logger.trace("Configuration: ukb_wsd:" + ukb_wsd
+				+ ", lkb_graph_bin_filepath:" + lkb_graph_bin_filepath
+				+ ", lkb_dict_filepath:" + lkb_dict_filepath
+				+ ", wordnet_version:" + wordnet_version);
+		
+		namespacePrefixData = config.getString("prefixdata");
+		tempFile = config.getString("textdisambiguation.file");
 
 	}
 
@@ -108,5 +104,8 @@ public class ReadConfiguration {
 	public String getOutputFormat() {
 		return outputFormat;
 	}
-
+	
+	public String getOutputFile() {
+		return outputFile;
+	}
 }

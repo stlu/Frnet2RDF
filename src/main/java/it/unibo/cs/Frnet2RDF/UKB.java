@@ -1,36 +1,14 @@
 package it.unibo.cs.Frnet2RDF;
 
 import it.unibo.cs.Frnet2RDF.utils.*;
-import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QueryFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Literal;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.RDFNode;
-import org.apache.jena.riot.RDFDataMgr;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import org.slf4j.Logger;
@@ -132,7 +110,9 @@ public class UKB  {
 					
 					// add Sense on token disambiguated
 					prc.forEach( fr -> {
-						  fr.addSenseScore(ctx, id, iri_denotes, score);
+						  if (fr.containsCtx(ctx)) { 
+						    fr.addSenseScore(id, iri_denotes, score);
+						  }
 					});		
 		/**			prl.get(getWordId(line)).addDenotedSense(
 							defaultNamespacePrefixData + IdFactory.getNewId(),
@@ -192,6 +172,7 @@ public class UKB  {
         	nlpnodes = slem.lemmatize(fr.getContent());
         	
         	String ctxStr = "ctx_"+ ++n_sent;
+        	fr.setCtx(ctxStr);
         	sb.append(ctxStr+"\n");
         	
         	for(int jk=0; jk < nlpnodes.size(); jk++) {
@@ -208,7 +189,7 @@ public class UKB  {
         	    	if (upos.equals("")) continue;
         	    	
         	    	// Save only node to wsd
-        	    	fr.addTokens(ctxStr, nod );
+        	    	fr.addTokens( nod );
         	    	//System.out.println("POS "+pos);
    	
         	    	if (upos.equals("")) continue;
@@ -334,18 +315,11 @@ public class UKB  {
 		// disambiguate all data 
 		ukb.disambiguate(exfr, true);  // true examine all rank, false only the biggest
 		
-		for (ExampleFrame frame : exfr) {
-			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
-			System.out.println("\t"+frame.getFrame()+"\n");
-			
-			Set<String> ctxs = frame.getDenotedSenses().keySet();
-			Collection<List <NLPnode>> nn = frame.getDenotedSenses().values();
-			frame.getDenotedSenses().forEach( (ctx, nods) -> {
-				nods.forEach( nd -> { 
-					System.out.println("\t"+nd.getLemma()+"\t"+nd.getSense());
-				});
-			});
-		}
+		try {
+			// Save data 
+			ldt.saveSentences(exfr);
+		 } catch (Exception e) {
+             e.printStackTrace();
+         }
 	}
-
 }

@@ -9,7 +9,7 @@ import java.util.Map;
 public class NLPnode {
 	private String token;                // word
 	private String lemma;                // lemma
-	private String pos;                  // part of speech 
+	private String pos;                  // part of speech Stanford
 	private Map<String, Double> senses;  // sense with relative score
 	
 	public NLPnode(String tk, String lm, String p) {
