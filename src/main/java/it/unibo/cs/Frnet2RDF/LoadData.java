@@ -135,26 +135,27 @@ public class LoadData {
 		Property propDenotes = out.createProperty("http://ontologydesignpatterns.org/cp/owl/semiotics.owl#denotes");
 		Property propBegin = out.createProperty("http://www.essepuntato.it/2008/12/earmark#begins");
 		Property propEnd = out.createProperty("http://www.essepuntato.it/2008/12/earmark#ends");
-		Property propRefer = out.createProperty("http://www.essepuntato.it/2008/12/earmark#refersTo");
+		Property propPosST = out.createProperty("https://w3id.org/framester/framenet/abox#posStanford");
+		Property propPosUKB = out.createProperty("https://w3id.org/framester/framenet/abox#pos");
+		Property resRefer = out.createProperty("http://www.essepuntato.it/2008/12/earmark#refersTo");
 		Property propWeight = out.createProperty("https://w3id.org/framester/framenet/abox#weight");
 		
 		for (ExampleFrame frame : exfr) {
-			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
+			logger.debug(">>>>>>>>>>>\n"+frame.getContent());
 			String last = frame.getName();
-			System.out.println("\t"+last+"\n");
+			logger.debug("\t"+last+"\n");
 			
 			int[] ii = {1};
 			
-			//List <NLPnode> nn = frame.getDenotedSenses();
-			//System.out.println("\t nn : "+nn.toString()+"\n");
 			frame.getDenotedSenses().forEach( nods -> {
-					System.out.println("\t"+nods.getLemma()+"\t"+nods.getSense());
+				logger.debug("\t"+nods.getLemma()+"\t"+nods.getSense());
 			});
 		    
 			frame.getSynsets().forEach(  ind -> {
-				System.out.println("\t"+frame.getNodeNum(ind).toString());
+				//System.out.println("\t"+frame.getNodeNum(ind).toString());
 				
 			    String label = frame.getNodeNum(ind).getToken();
+			    String posST = frame.getNodeNum(ind).getPos();
 				
 				// find index token on original example
 				int ini = frame.getContent().indexOf(label, 0) + 1;
@@ -166,13 +167,20 @@ public class LoadData {
 					
 					Resource resource=out.createResource(last +"-"+label+"-"+ii[0]);
 					resource.addProperty(RDFS.label, label, "en");
-					resource.addProperty(propDenotes, last);
+					
+					Resource rl = out.createProperty(last);
+					resource.addProperty(propDenotes, rl);
+					
 					resource.addProperty(propBegin, lini); 
 					resource.addProperty(propEnd, lend); 
+					resource.addProperty(propPosUKB, "v");
+					resource.addProperty(propPosST, posST);
 					
 					Literal dv = out.createTypedLiteral(dval.doubleValue());
 					resource.addProperty(propWeight,dv) ;
-					resource.addProperty(propRefer, wn );
+					
+					Resource ww = out.createProperty(wn);
+					resource.addProperty(resRefer, ww);
 					resource.inModel(out);
 				    ii[0]++;
 				});
@@ -180,7 +188,6 @@ public class LoadData {
 			});
 		}
 		
-		//out.setNsPrefixes(in.getNsPrefixMap());
 		out.write(new FileOutputStream(new File(conf.getOutputFile())), conf.getOutputFormat());
 	}
 }
