@@ -89,8 +89,9 @@ public class ExampleFrame {
 	    		String speach = this.nodes_wsd.get(this.synsets.get(j)).getPos();
 	    		String lemma = this.nodes_wsd.get(this.synsets.get(j)).getLemma();
 	    		String token = this.nodes_wsd.get(this.synsets.get(j)).getToken();
-	    		System.out.println(" speach "+speach+" token "+token+" lemma "+lemma+" j "+j);
+	    		//System.out.println(" speach "+speach+" token "+token+" lemma "+lemma+" j "+j);
 	    		if (lemma.equalsIgnoreCase("have")) newval.remove(j);
+	    		if (lemma.equalsIgnoreCase("do")) newval.remove(j);
 	    	    if (lemma.equalsIgnoreCase("be"))	newval.remove(j);
 	    	    if (speach.equalsIgnoreCase("MD"))  newval.remove(j);
 	    	}
