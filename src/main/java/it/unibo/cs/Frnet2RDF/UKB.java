@@ -110,18 +110,10 @@ public class UKB  {
 					
 					// add Sense on token disambiguated
 					prc.forEach( fr -> {
-						  if (fr.containsCtx(ctx)) { 
+						  if (fr.containsCtx(ctx)) {
 						    fr.addSenseScore(id, iri_denotes, score);
 						  }
 					});		
-		/**			prl.get(getWordId(line)).addDenotedSense(
-							defaultNamespacePrefixData + IdFactory.getNewId(),
-							iri_denotes,
-							synId,
-							score,
-							wn30 ? SenseInventory.WN30 : wn31
-									? SenseInventory.WN31
-									: null); **/
        
 					if (!allRanks)
 						break;
@@ -184,7 +176,7 @@ public class UKB  {
         	    	
         	    	// Convert and skip some kind of token
         	    	String upos = convPOStoUKB(pos);
-        	    	//System.out.println("Nodo "+nod.toString()+"\n\t "+upos);
+        	    	//System.out.println("Nodo "+nod.toString()+"\t "+upos);
         	    	if (upos.equals("SKIP")) continue;
         	    	if (upos.equals("")) continue;
         	    	
@@ -252,10 +244,12 @@ public class UKB  {
 		    TO to
 		    UH Interjection
 		    
-		    WDT Whdeterminer
-		    WP Whpronoun
-		    WP$ Possessive whpronoun
-
+		    WDT Whdeterminer //that what whatever which whichever
+		    WP Whpronoun     //that what whatever whatsoever which who whom whosoever
+		    WP$: WH-pronoun, possessive
+    			whose
+			WRB: Wh-adverb
+    			how however whence whenever where whereby whereever wherein whereof why
        **/
 		
 		 switch (in_pos) {

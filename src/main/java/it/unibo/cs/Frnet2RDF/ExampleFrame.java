@@ -16,7 +16,7 @@ public class ExampleFrame {
 	private String frame;   // name frame rdf 
 	private String ctx;     // string context for ukb
 	private List<NLPnode>  nodes_wsd; // sentence analized 
-	private List<Integer>  synsets;   // index of nodes_wsd
+	private List<Integer>  synsets;   // index of nodes_wsds that contain verbs
 	
 	public int hashCode() {
 	   return Objects.hashCode(name);
@@ -34,8 +34,8 @@ public class ExampleFrame {
 		this.name = n;
 		this.content = l;
 		this.frame = f;
-		this.nodes_wsd = new ArrayList();
-		this.synsets = new ArrayList();
+		this.nodes_wsd = new ArrayList<NLPnode>();
+		this.synsets = new ArrayList<Integer>();
 	}
 	
 	public String getName() {
@@ -76,15 +76,33 @@ public class ExampleFrame {
     	return this.nodes_wsd;
     }
     
+    /**
+     * Analyse all synsets to clean auxiliary verbs
+     */
     public List<Integer> getSynsets() {
-    	return this.synsets;
+    	
+    	List<Integer> newval = new ArrayList<Integer>(this.synsets);
+    	
+    	// if multiple verbs check if are auxiliary forms
+    	if (newval.size() > 1) {
+	    	for (int j = 0; j < this.synsets.size();  j++) {
+	    		String speach = this.nodes_wsd.get(this.synsets.get(j)).getPos();
+	    		String lemma = this.nodes_wsd.get(this.synsets.get(j)).getLemma();
+	    		String token = this.nodes_wsd.get(this.synsets.get(j)).getToken();
+	    		System.out.println(" speach "+speach+" token "+token+" lemma "+lemma+" j "+j);
+	    		if (lemma.equalsIgnoreCase("have")) newval.remove(j);
+	    	    if (lemma.equalsIgnoreCase("be"))	newval.remove(j);
+	    	    if (speach.equalsIgnoreCase("MD"))  newval.remove(j);
+	    	}
+    	}
+    	return newval;
     }
     
     public NLPnode getNodeNum(Integer id) {
     	return this.nodes_wsd.get(id);
     }
     /**
-     * Find principals synset 
+     * Add only verbs in principals synset 
      */
     private void setPrincipalSynsets() {
     	

@@ -141,9 +141,9 @@ public class LoadData {
 		Property propWeight = out.createProperty("https://w3id.org/framester/framenet/abox#weight");
 		
 		for (ExampleFrame frame : exfr) {
-			logger.debug(">>>>>>>>>>>\n"+frame.getContent());
+			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
 			String last = frame.getName();
-			logger.debug("\t"+last+"\n");
+			System.out.println("\t"+last+"\n");
 			
 			int[] ii = {1};
 			
@@ -151,6 +151,7 @@ public class LoadData {
 				logger.debug("\t"+nods.getLemma()+"\t"+nods.getSense());
 			});
 		    
+			// Check only verbal synset
 			frame.getSynsets().forEach(  ind -> {
 				//System.out.println("\t"+frame.getNodeNum(ind).toString());
 				
@@ -163,7 +164,8 @@ public class LoadData {
 				Literal lini = out.createTypedLiteral(ini);
 				Literal lend = out.createTypedLiteral(end);
 				
-				frame.getNodeNum(ind).getSense().forEach( (wn,dval) -> {
+				Map<String, Double> sortvalues = frame.getNodeNum(ind).getSenseOrder();
+				sortvalues.forEach( (wn,dval) -> {
 					
 					Resource resource=out.createResource(last +"-"+label+"-"+ii[0]);
 					resource.addProperty(RDFS.label, label, "en");

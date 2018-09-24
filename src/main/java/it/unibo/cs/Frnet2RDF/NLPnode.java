@@ -1,7 +1,10 @@
 package it.unibo.cs.Frnet2RDF;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /* 
  * Class to contain results after a Standford annotations process
@@ -37,8 +40,25 @@ public class NLPnode {
         return this.senses;
     }
     
+    public Map<String, Double> getSenseOrder() {
+        return NLPSortByValue(this.senses);
+    }
+    
     public void setSense(String sen, Double score) {
     	//System.out.println("setSense "+this.lemma+" sen "+sen);
     	this.senses.put(sen, score);
     }
+    
+	// Sort HashMap by Value
+    // see https://crunchify.com/how-to-sort-hashmap-by-key-and-value-in-java8-complete-tutorial/
+	private static <K, V extends Comparable<? super V>> Map<K, V> NLPSortByValue(Map<K, V> nlpMap) {
+ 
+		Map<K, V> nlpResult = new LinkedHashMap<>();
+		// get a list from nlMap
+		Stream<Map.Entry<K, V>> sequentialStream = nlpMap.entrySet().stream();
+ 
+		// comparingByValue() returns a comparator that compares Map.Entry in reverse order on value.
+		sequentialStream.sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEachOrdered(c -> nlpResult.put(c.getKey(), c.getValue()));
+		return nlpResult;
+	}
 }
