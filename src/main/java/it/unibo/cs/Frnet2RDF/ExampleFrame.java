@@ -81,22 +81,26 @@ public class ExampleFrame {
      */
     public List<Integer> getSynsets() {
     	
-    	List<Integer> newval = new ArrayList<Integer>(this.synsets);
+    	List<Integer> newval = new ArrayList<Integer>();
     	
     	// if multiple verbs check if are auxiliary forms
-    	if (newval.size() > 1) {
-	    	for (int j = 0; j < this.synsets.size();  j++) {
+    	if (this.synsets.size() > 1) {
+	    	for (int j = 0; j < this.synsets.size(); j++) {
 	    		String speach = this.nodes_wsd.get(this.synsets.get(j)).getPos();
 	    		String lemma = this.nodes_wsd.get(this.synsets.get(j)).getLemma();
 	    		String token = this.nodes_wsd.get(this.synsets.get(j)).getToken();
-	    		//System.out.println(" speach "+speach+" token "+token+" lemma "+lemma+" j "+j);
-	    		if (lemma.equalsIgnoreCase("have")) newval.remove(j);
-	    		if (lemma.equalsIgnoreCase("do")) newval.remove(j);
-	    	    if (lemma.equalsIgnoreCase("be"))	newval.remove(j);
-	    	    if (speach.equalsIgnoreCase("MD"))  newval.remove(j);
+	    		System.out.println(" speach "+speach+" token "+token+" lemma "+lemma+" j "+j);
+	    		if (lemma.equalsIgnoreCase("have") || 
+	    			lemma.equalsIgnoreCase("do")   ||
+	    			lemma.equalsIgnoreCase("be")   ||
+	    			speach.equalsIgnoreCase("MD")
+	    			) continue ;
+	    		newval.add(this.synsets.get(j));
 	    	}
+	    	return newval;
+    	} else {
+    		return this.synsets;
     	}
-    	return newval;
     }
     
     public NLPnode getNodeNum(Integer id) {
