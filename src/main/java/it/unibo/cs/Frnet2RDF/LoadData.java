@@ -63,7 +63,7 @@ public class LoadData {
 	            "  ?feSub a earmark:PointerRange ." + 
 	            "  ?feSub earmark:refersTo ?class ." +
 				"  ?class earmark:hasContent ?label ." +
-	            "  ?feSub ontology:denotes ?frame . }   LIMIT 3" ; 
+	            "  ?feSub ontology:denotes ?frame . } ";  //LIMIT 15" ; 
 
 		if (conf.getInputType().equals(ReadConfiguration.InputType.SPARQL_ENDPOINT)) {
 			logger.info("Applaying before rule {}", queryString);
@@ -171,7 +171,7 @@ public class LoadData {
 					resource.addProperty(RDFS.label, label, "en");
 					
 					Resource rl = out.createProperty(last);
-					resource.addProperty(propDenotes, rl);
+					resource.addProperty(resRefer, rl);
 					
 					resource.addProperty(propBegin, lini); 
 					resource.addProperty(propEnd, lend); 
@@ -182,7 +182,7 @@ public class LoadData {
 					resource.addProperty(propWeight,dv) ;
 					
 					Resource ww = out.createProperty(wn);
-					resource.addProperty(resRefer, ww);
+					resource.addProperty(propDenotes,ww);
 					resource.inModel(out);
 				    ii[0]++;
 				});
