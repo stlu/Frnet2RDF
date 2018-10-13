@@ -83,6 +83,8 @@ public class LoadData {
 			      String modifiedlabel = labelPropertyNode.toString().replaceAll("@en", "");
 			      prc.add(new ExampleFrame(classPropertyNode.toString(), modifiedlabel, framePropertyNode.toString()));
 			    }
+			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 			    qexec.close();
 			}
@@ -107,6 +109,8 @@ public class LoadData {
 			      String modifiedlabel = labelPropertyNode.toString().replaceAll("@en", "");
 			      prc.add(new ExampleFrame(classPropertyNode.toString(), modifiedlabel, framePropertyNode.toString()));
 			    }
+			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 			    qexec.close();
 			}
