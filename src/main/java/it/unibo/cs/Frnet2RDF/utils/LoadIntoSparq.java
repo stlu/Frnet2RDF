@@ -70,6 +70,7 @@ public class LoadIntoSparq {
             			conn.update("DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }");
             		}
                     conn.load(file);
+                    System.out.println("Succesfully load "+file);
                 });
             	//conn.queryResultSet(query, ResultSetFormatter::out);
        
