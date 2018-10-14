@@ -1,0 +1,37 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+prefix dcterms: <http://purl.org/dc/terms/> 
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+
+
+CONSTRUCT {
+	?f fn15schema:frame_name ?label .
+    ?f fn15schema:definition   ?definition  .
+    ?f fn15schema:hasFrameElement ?y  .
+} WHERE {
+		?s a pmofn:Frame .
+  		?s rdfs:label ?label .
+		?s dcterms:created ?date .
+  		?s dcterms:creator ?creator .
+        ?s skos:definition ?definition .
+
+    	BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/",STR(?label))) AS ?f)
+  		OPTIONAL {
+            ?s pmo:semRole ?role .
+    		BIND (STRAFTER( STR(?role), "@" ) as ?postfix )
+    		BIND (STRAFTER( STR(?role), "http://premon.fbk.eu/resource/fn17-" ) as ?temp1 )
+            BIND (STRBEFORE( STR(?temp1), "@" ) as ?prefix )
+    		BIND (CONCAT(UCASE(SUBSTR(?postfix, 1, 1)), SUBSTR(?postfix, 2)) as ?camel)
+    		BIND (CONCAT(?camel, ".") as ?temp2)
+            BIND (CONCAT(?temp2, STR(?prefix)) as ?temp3)
+            BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/fe/", ?temp3)) AS ?y)
+        }
+		
+} 

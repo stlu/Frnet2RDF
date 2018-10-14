@@ -1,0 +1,32 @@
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+
+CONSTRUCT {
+    ?f fn15schema:isInheritedBy ?z .
+	?f fn15schema:isUsedBy ?isusedlabel .
+
+} WHERE {
+		?s a pmofn:Frame .
+  		?s rdfs:label ?label .
+  
+  		BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/",STR(?label))) AS ?f)
+  
+		OPTIONAL {
+          ?inherits pmofn:inheritsFrom ?s .
+          ?inherits rdfs:label ?inlabel .
+         
+          BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?inlabel))) AS ?z) 
+        }
+		OPTIONAL {
+          ?isused pmofn:uses ?s .
+          ?isused rdfs:label ?isusedlabel .
+          BIND (IRI(CONCAT("https://w3id.org/framester/framenet/tbox/", STR(?isusedlabel))) AS ?x) 
+        }
+		
+} 

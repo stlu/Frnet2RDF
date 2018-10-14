@@ -1,0 +1,31 @@
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+
+CONSTRUCT {
+  ?y  fn15schema:hasSuperFE ?z .
+  ?z fn15schema:hasSubFE ?y .
+} WHERE {
+  ?feSub pmofn:inheritsFromFER ?feSuper .
+
+  BIND (STRAFTER( STR(?feSub), "@" ) as ?postfix )
+    		BIND (STRAFTER( STR(?feSub), "http://premon.fbk.eu/resource/fn17-" ) as ?temp1 )
+            BIND (STRBEFORE( STR(?temp1), "@" ) as ?prefix )
+    		BIND (CONCAT(UCASE(SUBSTR(?postfix, 1, 1)), SUBSTR(?postfix, 2)) as ?camel)
+    		BIND (CONCAT(?camel, ".") as ?temp2)
+            BIND (CONCAT(?temp2, STR(?prefix)) as ?temp3)
+            BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/fe/", ?temp3)) AS ?y)
+  
+  BIND (STRAFTER( STR(?feSuper), "@" ) as ?postfix1 )
+    		BIND (STRAFTER( STR(?feSuper), "http://premon.fbk.eu/resource/fn17-" ) as ?temp4 )
+            BIND (STRBEFORE( STR(?temp4), "@" ) as ?prefix1 )
+    		BIND (CONCAT(UCASE(SUBSTR(?postfix1, 1, 1)), SUBSTR(?postfix1, 2)) as ?camel1)
+    		BIND (CONCAT(?camel1, ".") as ?temp5)
+            BIND (CONCAT(?temp5, STR(?prefix1)) as ?temp6)
+            BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/fe/", ?temp6)) AS ?z)
+}

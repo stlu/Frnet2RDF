@@ -1,0 +1,31 @@
+#
+# Enviroment variable to configure frnetMake
+#
+# STEP1
+#
+PREMON_HOME="/xxx/premon/target/premon"
+PREMON_CONF="/xxx/Frnet2RDF/scripts/conf/premon_framenet17.properties"
+PREMON_OUT="/xxx/out/premon"
+#
+# STEP2
+#
+FRNET2RDF_HOME="/xxx/Frnet2RDF"
+SPARQL_DATASET_PREMON="http://localhost:3030/premon"
+#
+# STEP3
+#
+REFACT_CONF="/xxx/Frnet2RDF/scripts/conf/refact-config.properties"
+REFACT_RULES_DIR="/xxx/Frnet2RDF/scripts/conf/refact_rules"
+REFACT_OUT="/xxx/out/step3_out.ttl"
+# 
+# STEP4 e STEP6
+SPARQL_DATASET_FRNET="http://localhost:3030/frnet"
+#
+# STEP5
+#
+FRNET2RDF_CONF="/xxx/Frnet2RDF/scripts/conf/frnet2rdf-config.properties"
+FRNET2RDF_OUT="/xxx/out/step4-ukb-wsd_out.ttl"
+UKB_WSD="/xxx/ukb/src/ukb_wsd"
+WN30_GLOSS="/xxx/ukb/lkb_sources/30/wn30-gloss.bin"
+WN30_DICT="/xxx/ukb/lkb_sources/30/wnet30_dict.txt"
+UKB_TMP="/xxx/out/tempUkb.txt"

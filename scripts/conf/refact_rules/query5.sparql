@@ -1,0 +1,38 @@
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+
+CONSTRUCT {
+    ?f pmofn:frameRelation ?z .
+    ?f fn15schema:uses ?k .
+	?f fn15schema:subframeOf ?x .
+} WHERE {
+		?s a pmofn:Frame .
+  		?s rdfs:label ?label .
+		OPTIONAL {
+			?s pmofn:frameRelation ?relation .
+			?relation rdfs:label ?inhlabel .
+			 BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?inhlabel))) AS ?z)
+		}
+		OPTIONAL {
+			?s pmofn:uses ?uses .
+			?uses rdfs:label ?uselabel .
+			BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?uselabel))) AS ?k) 
+		}
+		OPTIONAL {
+			?s pmofn:subframeOf ?subframe .
+			?subframe rdfs:label ?sublabel .
+			BIND (IRI(CONCAT("https://w3id.org/framester/framenet/tbox/subframeOf/", STR(?sublabel))) AS ?x) 
+        }
+		
+    	BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/",STR(?label))) AS ?f)
+        #BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?inhlabel))) AS ?z) 
+  		#BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?uselabel))) AS ?k) 
+		#BIND (IRI(CONCAT("https://w3id.org/framester/framenet/tbox/subframeOf/", STR(?sublabel))) AS ?x) 
+
+}
+

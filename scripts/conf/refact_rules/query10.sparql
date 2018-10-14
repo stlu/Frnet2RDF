@@ -1,0 +1,63 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+
+
+CONSTRUCT {
+  ?f a fn15schema:FrameElement .
+  ?f a owl:ObjectProperty .
+  ?f fn15schema:FE_name ?label .
+  ?f fn15schema:definition   ?definition  .
+  ?f fn15schema:FE_coreType ?type .
+} WHERE {
+      {SELECT distinct ?s
+        WHERE {
+          ?s a <http://premon.fbk.eu/ontology/fn#FrameElement>
+        }
+  }
+  OPTIONAL {
+     ?s rdfs:label ?label . 
+     BIND (STRBEFORE( STR(?s), "@" ) as ?temp1 )
+     BIND (STRAFTER( STR(?temp1), "-" ) as ?prefix )
+     BIND (CONCAT(?label, ".") as ?temp2)
+     BIND (CONCAT(?temp2, STR(?prefix)) as ?name)
+     BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/fe/",STR(?name))) AS ?f)
+  }
+  OPTIONAL {
+      ?s skos:definition ?definition .
+  }
+  OPTIONAL {
+     ?s a pmofn:ExtraThematicFrameElement .
+    VALUES ?type {"Extra-Thematic"}
+  }
+  OPTIONAL {
+     ?s a pmofn:CoreFrameElement .
+    VALUES ?type {"Core"}
+  }
+  OPTIONAL {
+     ?s a pmofn:PeripheralFrameElement .
+    VALUES ?type {"Peripheral"}
+  }
+  OPTIONAL {
+     ?s a pmofn:CoreUnexpressedFrameElement .
+    VALUES ?type {"CoreUnexpressed"}
+  }
+  OPTIONAL {
+    ?s pmofn:usesFER ?role .
+    BIND (STRAFTER( STR(?role), "@" ) as ?postfix )
+    BIND (STRAFTER( STR(?role), "-" ) as ?temp1 )
+    BIND (STRBEFORE( STR(?temp1), "@" ) as ?prefix )
+    BIND (CONCAT(UCASE(SUBSTR(?postfix, 1, 1)), SUBSTR(?postfix, 2)) as ?camel)
+    BIND (CONCAT(?camel, ".") as ?temp2)
+    BIND (CONCAT(?temp2, STR(?prefix)) as ?temp3)
+    BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/fe/", ?temp3)) AS ?y)
+  }
+}

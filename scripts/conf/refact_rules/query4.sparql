@@ -1,0 +1,35 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+prefix dcterms: <http://purl.org/dc/terms/> 
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+prefix skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX fn: <http://www.w3.org/2005/xpath-functions#>
+PREFIX ontolex: <http://www.w3.org/ns/lemon/ontolex#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX lexinfo: <http://www.lexinfo.net/ontology/2.0/lexinfo#>
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+
+
+CONSTRUCT {
+	?f fn15schema:hasLexUnit ?y .
+} WHERE {
+		?s a pmofn:Frame .
+  		?s rdfs:label ?label .
+		?s ontolex:isEvokedBy ?by .
+        ?by lexinfo:partOfSpeech ?inhlabel .
+    	BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/",STR(?label))) AS ?f)
+    
+		BIND (STRAFTER( STR(?by), "-" ) as ?name )
+		BIND (STRBEFORE( STR(?by), "-" ) as ?prefix )
+        BIND (STRAFTER( STR(?prefix), "resource/" ) as ?temp3 )
+        BIND (REPLACE(STR(?name), "\\+", "_" ) as ?temp2)
+		BIND (CONCAT(".",STR(?temp3)) as ?temp)
+		BIND (CONCAT(?temp2, STR(?temp)) as ?temp1)
+		BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/lu/", ?temp1)) AS ?y)
+
+} 
+

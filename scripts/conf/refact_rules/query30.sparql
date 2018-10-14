@@ -1,0 +1,61 @@
+PREFIX collections: <http://swan.mindinformatics.org/ontologies/1.2/collections/>
+PREFIX dc:  <http://purl.org/dc/elements/1.1/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+prefix pmofn: <http://premon.fbk.eu/ontology/fn#>
+PREFIX pmo: <http://premon.fbk.eu/ontology/core#>
+prefix nif:   <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> 
+PREFIX fn15schema: <https://w3id.org/framester/framenet/tbox/>
+PREFIX frame: <https://w3id.org/framester/framenet/abox/frame/>
+PREFIX fe: <https://w3id.org/framester/framenet/abox/fe/>
+PREFIX lu: <https://w3id.org/framester/framenet/abox/lu/>
+PREFIX example: <https://w3id.org/framester/framenet/abox/example/>
+PREFIX earmark: <http://www.essepuntato.it/2008/12/earmark#>	
+PREFIX nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX ontology:  <http://ontologydesignpatterns.org/cp/owl/semiotics.owl#>
+##PREFIX pm: <http://premon.fbk.eu/resource/>
+
+CONSTRUCT {
+  ?f a earmark:StringDocuverse . 
+  ?f earmark:hasContent ?content .
+  ?x a earmark:PointerRange .
+  ?x rdfs:label ?stringNew .
+  ?x ontology:denotes ?frame .
+  ?x earmark:begins ?ini .
+  ?x earmark:ends ?endNew .
+  ?x earmark:refersTo ?f .
+} where {
+	
+        ?rs rdf:type pmo:Markable .
+        ?rs nif:referenceContext ?s .
+
+        ?s a pmo:Example .
+        ?s nif:isString ?content .
+		
+        ?s nif:annotation ?as .
+        ?as pmo:valueObj ?class .
+
+        ?class a pmofn:Frame .
+        ?class rdfs:label ?label .
+
+        ?rs nif:annotation ?as .
+        ?rs nif:beginIndex ?ini .
+        ?rs nif:endIndex ?end .
+  
+        ?rs nif:anchorOf ?string .
+  	 ####filter (?s IN(pm:fn17-example_4112698)) .
+        
+	    BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/example/", STR(?label))) AS ?temp1) 
+        BIND (IRI(CONCAT( STR(?temp1), "-example" )) as ?temp3) 
+		BIND (IRI(CONCAT(STR(?temp3), strafter(STR(?s),"_") )) as ?f )
+
+        BIND (IRI(CONCAT("https://w3id.org/framester/framenet/abox/frame/", STR(?label))) AS ?frame) 
+        BIND (CONCAT( STR(?f), "-") AS ?temp2)
+         
+        BIND (STRLANG(substr(str(?content), ?ini+1,(?end-?ini+1)), 'en') AS ?stringNew)
+        BIND (xsd:int(str(?end+1)) AS ?endNew) 
+  	    BIND (IRI(CONCAT( STR(?temp2), ENCODE_FOR_URI(STR(?stringNew)))) AS ?x) 
+} 
+
