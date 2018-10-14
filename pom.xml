@@ -89,9 +89,39 @@
 					 </arguments>  
 			     </configuration>  
 			     
-			</plugin>  
+			</plugin> 
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-dependency-plugin</artifactId>
+			  <executions>
+				    <execution>
+				      <phase>package</phase>
+				      <goals>
+				        <goal>copy-dependencies</goal>
+				      </goals>
+				      <configuration>
+				        <outputDirectory>${project.build.directory}/${project.build.finalName}.lib</outputDirectory>
+				        <includeScope>runtime</includeScope>
+				      </configuration>
+				    </execution>
+			  </executions>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-jar-plugin</artifactId>
+			   <version>3.1.0</version>
+			  <configuration>
+			    <archive>
+			      <manifest>
+			        <addClasspath>true</addClasspath>
+			        <classpathPrefix>${project.build.finalName}.lib/</classpathPrefix>
+			        <mainClass>${fully.qualified.main.class}</mainClass>
+			      </manifest>
+			    </archive>
+			  </configuration>
+			</plugin>
+		</plugins> 
 		    
-        </plugins>
     </build>
 
 </project>
