@@ -347,7 +347,7 @@ step4() {
 
   # STEP4 - load previous step's result into the Sparql Endpoint 
   #         defined in SPARQL_DATASET_FRNET
-  log_msg "** STEP2 start" 
+  log_msg "** STEP4 start" 
 
   _OPTIONS=" -f $REFACT_OUT -s $SPARQL_DATASET_FRNET "
   echo "... load $REFACT_OUT into $SPARQL_DATASET_PREMON "
