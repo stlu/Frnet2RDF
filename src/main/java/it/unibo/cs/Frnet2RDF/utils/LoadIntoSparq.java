@@ -6,6 +6,9 @@ import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionFactory;
 
 import org.apache.jena.system.Txn;
+
+import java.net.URL;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -20,6 +23,7 @@ public class LoadIntoSparq {
 
     private static String file;
     private static String sparql;
+    private static String graphName;
     
     public static void main(String[] args)  {
         
@@ -34,19 +38,25 @@ public class LoadIntoSparq {
                 .desc("Input file to load")
                 .longOpt("file")
                 .build();
-            Option option_s = Option.builder("s")
+        Option option_s = Option.builder("s")
             	.hasArg()
                 .required(true)
                 .desc("Sparl Endpoing Http")
                 .longOpt("sparql")
                 .build();
-            Option option_d = Option.builder("d")
+        Option option_d = Option.builder("d")
                     .desc("Delete Sparql data")
                     .longOpt("delete")
                     .build();
+        Option option_g = Option.builder("g")
+            	.hasArg()
+                .desc("URI Graph Name")
+                .longOpt("graph")
+                .build();
         options.addOption(option_f);
         options.addOption(option_s);
         options.addOption(option_d);
+        options.addOption(option_g);
         
         try {
         	// parse the command line arguments
@@ -59,17 +69,29 @@ public class LoadIntoSparq {
             if (cmd.hasOption("s")) {
                 sparql = cmd.getOptionValue("s");
             }
-
+            if (cmd.hasOption("g")) {
+            	// initialise the member variable
+                graphName = cmd.getOptionValue("g");
+            }
            
             //System.out.println(" sparql "+SPK.sparql);
             //Query query = QueryFactory.create("SELECT * { {?s ?p ?o }  } ");
             
             try ( RDFConnection conn = RDFConnectionFactory.connect(sparql) ) {
+            	// https://jena.apache.org/documentation/txn/txn.html
             	Txn.executeWrite(conn, ()->{
             		if (cmd.hasOption("d")) {
-            			conn.update("DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }");
+            			if (cmd.hasOption("g")) {
+            				try {
+            					conn.delete(sparql+"data/"+graphName);
+            				} catch (Exception exp) {
+            					System.out.println("Delete failed on graph "+graphName+ " error "+exp.getMessage());
+            				}
+            			} else {
+            				conn.update("DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }");
+            			}
             		}
-                    conn.load(file);
+                    conn.load(graphName, file);
                     System.out.println("Succesfully load "+file);
                 });
             	//conn.queryResultSet(query, ResultSetFormatter::out);
