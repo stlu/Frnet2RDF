@@ -17,7 +17,7 @@
 #
 # Orchestration
 # -------------
-# The script frnetMake.sh execude 4 steps to complete all work 
+# The script frnetMake.sh execude 6 steps to complete all work 
 #
 # STEP1 - convert the Framenet dataset (XML) in RDF using Premonitor  
 #         need PREMON_HOME, PREMON_CONF, PREMON_OUT
@@ -113,15 +113,6 @@ log_msg() {
     echo $(date '+%D %X') $1  >>   $FRNETMAKE_LOGS_STDERROUT
 }
 
-log_end_msg() {
-    if [ $1 -eq 0 ]; then
-	res='[OK]'
-    else
-	res='[failed]'
-    fi
-    echo $res 
-    echo $(date '+%D %X') $res >>   $FRNETMAKE_LOGS_STDERROUT
-}
 usage()
 {
   echo "Usage: ${0##*/} {step1|step2|step3|step4|step5|step6|runAll|status}"
