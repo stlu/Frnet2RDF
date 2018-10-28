@@ -113,7 +113,7 @@ public class ExampleFrame {
     	
     	for(int i = 0; i < this.nodes_wsd.size(); i++) {
     		String speach = this.nodes_wsd.get(i).getPos();
-    	
+
 			switch (speach) {
 				case "VB" : // Verb, base form
 				case "VBD" : // Verb, past tense
@@ -122,6 +122,20 @@ public class ExampleFrame {
 				case "VBP" : // Verb, non­3rd person singular present
 				case "VBZ" : // Verb, 3rd person singular present
 				case "MD"  : // Modal
+				//	
+			 	case "NN" :  // Noun, singular or mass
+	            case "NNS" : // Noun, plural
+	            case "NNP" : // Proper noun, singular
+	            case "NNPS" : // Proper noun, plural    
+	            //  	
+	            case "RB"  : // Adverb
+                case "RBR" : // Adverb, comparative
+                case "RBS" : // Adverb, superlative
+                case "WRB" : // Whadverb"
+                //
+                case "JJ" :  // Adjective
+                case "JJR" : // Adjective, comparative
+                case "JJS" : // Adjective, superlative
 					if (!this.synsets.contains(i)) {
 						this.synsets.add(i);
 					}

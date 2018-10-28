@@ -13,17 +13,19 @@ public class NLPnode {
 	private String token;                // word
 	private String lemma;                // lemma
 	private String pos;                  // part of speech Stanford
+	private String pos_u;                // part of speech UKB
 	private Map<String, Double> senses;  // sense with relative score
 	
-	public NLPnode(String tk, String lm, String p) {
+	public NLPnode(String tk, String lm, String p, String u) {
 		this.token = tk;
 		this.lemma = lm;
 		this.pos = p;
+		this.pos_u = u;
 		this.senses = new HashMap<>();
 	}
 	
 	public String toString() {
-        return "NLPnode [ token=>" + token + " lemma=>"+ lemma + " pos=>" + pos + " ]";
+        return "NLPnode [ token=>" + token + " lemma=>"+ lemma + " pos=>" + pos + " pos_u=>" + pos_u + " ]";
     }
 	
 	public String getToken() {
@@ -34,6 +36,9 @@ public class NLPnode {
     }
     public String getPos() {
         return this.pos;
+    }
+    public String getPosUkb() {
+        return this.pos_u;
     }
     
     public Map<String, Double> getSense() {

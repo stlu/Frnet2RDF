@@ -83,7 +83,7 @@ public class UKB  {
 			
 			
 			while ((line = reader.readLine()) != null) {
-				logger.trace(line);
+				logger.debug(line);
 
 				// The first line prints the command
 				if (line.startsWith("!!")) {
@@ -107,11 +107,11 @@ public class UKB  {
 					
 							String ctx = getWordCtx(line);
 							Integer id = getWordId(line);
-					
+							
 					// add Sense on token disambiguated
 					prc.forEach( fr -> {
 						  if (fr.containsCtx(ctx)) {
-						    fr.addSenseScore(id, iri_denotes, score);
+							fr.addSenseScore(id, iri_denotes, score);
 						  }
 					});		
        
@@ -175,7 +175,8 @@ public class UKB  {
         	    	String pos = nod.getPos();
         	    	
         	    	// Convert and skip some kind of token
-        	    	String upos = convPOStoUKB(pos);
+        	        String upos = slem.convPOStoUKB(pos);
+
         	    	//System.out.println("Nodo "+nod.toString()+"\t "+upos);
         	    	if (upos.equals("SKIP")) continue;
         	    	if (upos.equals("")) continue;
@@ -199,7 +200,7 @@ public class UKB  {
         	    NLPnode ctxnod = ncnods.get(0).get(0);
         	    String word = ctxnod.getLemma();
         	    String ctxpos = ctxnod.getPos();
-        	    String uctxpos = convPOStoUKB(ctxpos);
+        	    String uctxpos = slem.convPOStoUKB(ctxpos);
         	    //System.out.println("CONTEXTNodo "+ctxnod.toString());
 				
         	    sb.append(word.replace(' ', '_'));
@@ -218,84 +219,7 @@ public class UKB  {
 		return sb.toString();
 	}
 	
-	/* 
-	 * Convert Stanford's pos into UKB pos
-	 */
-	 private static String convPOStoUKB(String in_pos) {
-		
-		String posUKB = "SKIP";
-        /*  vedi https://stackoverflow.com/questions/1833252/java-stanford-nlp-part-of-speech-labels
-            CC Coordinating conjunction
-		    CD Cardinal number
-		    DT Determiner
-		    EX Existential there
-		    FW Foreign word
-		    IN Preposition or subordinating conjunction
-		    
-		    LS List item marker
-		    
-		    PDT Predeterminer
-		    POS Possessive ending
-		    PRP Personal pronoun
-		    PRP$ Possessive pronoun
-		    
-		    RP Particle
-		    SYM Symbol
-		    TO to
-		    UH Interjection
-		    
-		    WDT Whdeterminer //that what whatever which whichever
-		    WP Whpronoun     //that what whatever whatsoever which who whom whosoever
-		    WP$: WH-pronoun, possessive
-    			whose
-			WRB: Wh-adverb
-    			how however whence whenever where whereby whereever wherein whereof why
-       **/
-		
-		 switch (in_pos) {
-            case "NN" :  // Noun, singular or mass
-            case "NNS" : // Noun, plural
-            case "NNP" : // Proper noun, singular
-            case "NNPS" : // Proper noun, plural
-            	posUKB = "n";
-       			break;
-            case "VB" : // Verb, base form
-            case "VBD" : // Verb, past tense
-            case "VBG" : // Verb, gerund or present participle
-            case "VBN" : // Verb, past participle
-            case "VBP" : // Verb, non­3rd person singular present
-            case "VBZ" : // Verb, 3rd person singular present
-            case "MD"  : // Modal
-            	posUKB = "v";
-       			break;
-            case "RB"  : // Adverb
-            case "RBR" : // Adverb, comparative
-            case "RBS" : // Adverb, superlative
-            case "WRB" : // Whadverb" 
-            	posUKB = "r";
-       			break;
-            case "JJ" :  // Adjective
-            case "JJR" : // Adjective, comparative
-            case "JJS" : // Adjective, superlative
-       			posUKB = "a";
-       			break;
-       			
-            case "," : // skip punctuation
-            case "." :
-            case ";" :
-            case ":" :
-            case "!" :
-            case "?" :
-            case "-LRB-" : // ( [ {
-            case "-RRB-" : // ( [ {
-            	posUKB = "SKIP";
-            	break;
-       		default :
-       			posUKB = "";
-       			break;
-        } 
-        return posUKB;
-	}
+	
 	
 	public static void main(String[] args) {
 		//Disambiguator ukb = UKB.getInstance(args[0]);

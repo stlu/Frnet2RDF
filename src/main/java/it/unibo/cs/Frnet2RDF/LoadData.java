@@ -31,6 +31,7 @@ import org.apache.jena.riot.lang.PipedRDFIterator;
 import org.apache.jena.riot.lang.PipedRDFStream;
 import org.apache.jena.riot.lang.PipedTriplesStream;
 import org.apache.jena.riot.out.SinkTripleOutput;
+import org.apache.jena.vocabulary.RDF;
 import org.apache.jena.vocabulary.RDFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,6 +144,8 @@ public class LoadData {
 		Property propPosUKB = out.createProperty("https://w3id.org/framester/framenet/abox#pos");
 		Property resRefer = out.createProperty("http://www.essepuntato.it/2008/12/earmark#refersTo");
 		Property propWeight = out.createProperty("https://w3id.org/framester/framenet/abox#weight");
+		Resource ptrRange=out.createResource("http://www.essepuntato.it/2008/12/earmark#PointerRange");
+		Resource syn=out.createResource("https://w3id.org/framester/wn/wn30/schema/Synset");
 		
 		for (ExampleFrame frame : exfr) {
 			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
@@ -155,12 +158,14 @@ public class LoadData {
 				logger.debug("\t"+nods.getLemma()+"\t"+nods.getSense());
 			});
 		    
-			// Check only verbal synset
+			// Check  synset 
 			frame.getSynsets().forEach(  ind -> {
 				//System.out.println("\t"+frame.getNodeNum(ind).toString());
 				
 			    String label = frame.getNodeNum(ind).getToken();
 			    String posST = frame.getNodeNum(ind).getPos();
+			    String posUKB = frame.getNodeNum(ind).getPosUkb(); //v,n
+			    //System.out.println(" saveSentences  ==> nod "+frame.getNodeNum(ind).toString());
 				
 				// find index token on original example
 				int ini = frame.getContent().indexOf(label, 0) + 1;
@@ -172,6 +177,8 @@ public class LoadData {
 				sortvalues.forEach( (wn,dval) -> {
 					
 					Resource resource=out.createResource(last +"-"+label+"-"+ii[0]);
+                    
+					resource.addProperty(RDF.type, ptrRange);
 					resource.addProperty(RDFS.label, label, "en");
 					
 					Resource rl = out.createProperty(last);
@@ -179,7 +186,7 @@ public class LoadData {
 					
 					resource.addProperty(propBegin, lini); 
 					resource.addProperty(propEnd, lend); 
-					resource.addProperty(propPosUKB, "v");
+					resource.addProperty(propPosUKB, posUKB); 
 					resource.addProperty(propPosST, posST);
 					
 					Literal dv = out.createTypedLiteral(dval.doubleValue());
@@ -187,7 +194,13 @@ public class LoadData {
 					
 					Resource ww = out.createProperty(wn);
 					resource.addProperty(propDenotes,ww);
+					
 					resource.inModel(out);
+				    ii[0]++;
+				    
+				    Resource res2=out.createResource(wn);
+				    res2.addProperty(RDF.type, syn);
+				    res2.inModel(out);
 				    ii[0]++;
 				});
 				
