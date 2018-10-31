@@ -19,7 +19,8 @@ public class UKB  {
 	
 	// example string 
 	// ctx_3 w21  02700029-a/0.617999 09937688-n/0.201255 02700199-a/0.093806 02177397-a/0.0869394 !! colonial
-	private Pattern resultPattern = Pattern.compile("\\b(\\S*)/(\\S*)\\b"); // 
+	private Pattern resUKB = Pattern.compile("(\\S*)/(\\S*)"); // 
+	private Pattern resultPattern = Pattern.compile(" ");
 	
 	private String flags = " --ppr --allranks";  // --nopos
 	private String tempFile;
@@ -89,33 +90,47 @@ public class UKB  {
 				if (line.startsWith("!!")) {
 					continue;
 				}
-				Matcher m = resultPattern.matcher(line);
-				while (m.find()) {
-					String synId = line.substring(m.start(1), m.end(1));
-					String scoreString = line.substring(m.start(2), m.end(2));
-					//System.out.println(" ===> group: "+m.group()+ " synID : "+synId+" score: "+scoreString);
-					
-					Double score = Double.parseDouble(scoreString);
+				
+				String[] parts = resultPattern.split(line);
+				
+	            for (int j = 0; j < parts.length; j++) {
+	                String val = parts[j].trim();
+	                //System.out.println(" val "+val);
+	                if (val.length() <= 0 ) continue;
+	                if (val.contains("!!"))  break;
+	                
+	                Matcher m = resUKB.matcher(val);
+	                
+	                while (m.find()) {       	
+	                	String synId = val.substring(m.start(1), m.end(1));
+						String scoreString = val.substring(m.start(2), m.end(2));
+						//System.out.println(" ===> group: "+m.group()+ " synID : "+synId+" score: "+scoreString);
+						
+						Double score = Double.parseDouble(scoreString);
 
-					String iri_denotes = wn30 ? SynsetIDtoURI
-							.synsetId30toIRI(synId) : wn31 ? SynsetIDtoURI
-							.synsetId31toIRI(synId) : null;
-							//System.out.println("iri_denotes "+iri_denotes);
-					
-							String ctx = getWordCtx(line);
-							Integer id = getWordId(line);
-							
-					// add Sense on token disambiguated
-					prc.forEach( fr -> {
-						  if (fr.containsCtx(ctx)) {
-							fr.addSenseScore(id, iri_denotes, score);
-						  }
-					});		
-       
-					if (!allRanks)
-						break;
-				} // end while m.find
+						String iri_denotes = wn30 ? SynsetIDtoURI
+								.synsetId30toIRI(synId) : wn31 ? SynsetIDtoURI
+								.synsetId31toIRI(synId) : null;
+								//System.out.println("iri_denotes "+iri_denotes);
+						
+								String ctx = getWordCtx(line);
+								Integer id = getWordId(line);
+								
+						// add Sense on token disambiguated
+						prc.forEach( fr -> {
+							  if (fr.containsCtx(ctx)) {
+								fr.addSenseScore(id, iri_denotes, score);
+							  }
+						});		
+	                    
 
+						if (!allRanks) {
+							j = parts.length;
+							break;
+						}
+					} // end while m.find   
+            
+	            }
 			} // end while reader
 			
 			// see https://www.javaworld.com/article/2071275/core-java/when-runtime-exec---won-t.html
