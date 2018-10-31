@@ -19,7 +19,7 @@ public class UKB  {
 	
 	// example string 
 	// ctx_3 w21  02700029-a/0.617999 09937688-n/0.201255 02700199-a/0.093806 02177397-a/0.0869394 !! colonial
-	private Pattern resultPattern = Pattern.compile(" (\\S+)/(\\S+) "); // 
+	private Pattern resultPattern = Pattern.compile("\\b(\\S*)/(\\S*)\\b"); // 
 	
 	private String flags = " --ppr --allranks";  // --nopos
 	private String tempFile;
@@ -83,20 +83,17 @@ public class UKB  {
 			
 			
 			while ((line = reader.readLine()) != null) {
-				logger.debug(line);
+				logger.info(line);
 
 				// The first line prints the command
 				if (line.startsWith("!!")) {
 					continue;
 				}
-
 				Matcher m = resultPattern.matcher(line);
 				while (m.find()) {
-                    
 					String synId = line.substring(m.start(1), m.end(1));
 					String scoreString = line.substring(m.start(2), m.end(2));
-					
-					logger.debug(line + " ===> " + scoreString);
+					//System.out.println(" ===> group: "+m.group()+ " synID : "+synId+" score: "+scoreString);
 					
 					Double score = Double.parseDouble(scoreString);
 
@@ -117,7 +114,6 @@ public class UKB  {
        
 					if (!allRanks)
 						break;
-
 				} // end while m.find
 
 			} // end while reader
