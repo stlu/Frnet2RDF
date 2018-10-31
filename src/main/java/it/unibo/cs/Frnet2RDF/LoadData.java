@@ -64,7 +64,7 @@ public class LoadData {
 	            "  ?feSub a earmark:PointerRange ." + 
 	            "  ?feSub earmark:refersTo ?class ." +
 				"  ?class earmark:hasContent ?label ." +
-	            "  ?feSub ontology:denotes ?frame . } ";  //LIMIT 15" ; 
+		    "  ?feSub ontology:denotes ?frame . } ";  //LIMIT 15" ;
 
 		if (conf.getInputType().equals(ReadConfiguration.InputType.SPARQL_ENDPOINT)) {
 			logger.info("Applaying before rule {}", queryString);
@@ -147,10 +147,14 @@ public class LoadData {
 		Resource ptrRange=out.createResource("http://www.essepuntato.it/2008/12/earmark#PointerRange");
 		Resource syn=out.createResource("https://w3id.org/framester/wn/wn30/schema/Synset");
 		
+		int ntot_synsets = 0;
+		
 		for (ExampleFrame frame : exfr) {
 			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
 			String last = frame.getName();
 			System.out.println("\t"+last+"\n");
+			
+			ntot_synsets += frame.getSynsets().size();
 			
 			int[] ii = {1};
 			
@@ -168,8 +172,9 @@ public class LoadData {
 			    //System.out.println(" saveSentences  ==> nod "+frame.getNodeNum(ind).toString());
 				
 				// find index token on original example
-				int ini = frame.getContent().indexOf(label, 0) + 1;
-				int end = ini + label.length() - 1;
+			    int ini = frame.getContent().indexOf(label, 0);
+				int end = ini + label.length();
+				//System.out.println("\""+frame.getContent().substring(ini,end)+"\"");
 				Literal lini = out.createTypedLiteral(ini);
 				Literal lend = out.createTypedLiteral(end);
 				
@@ -206,6 +211,7 @@ public class LoadData {
 				
 			});
 		}
+		System.out.println("##### TOT synsets found UKB "+ntot_synsets);
 		
 		out.write(new FileOutputStream(new File(conf.getOutputFile())), conf.getOutputFormat());
 	}
