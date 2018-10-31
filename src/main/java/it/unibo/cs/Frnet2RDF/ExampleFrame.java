@@ -15,8 +15,9 @@ public class ExampleFrame {
 	private String content;	//sentences
 	private String frame;   // name frame rdf 
 	private String ctx;     // string context for ukb
+	private int n_verbs;    // count verbs number 
 	private List<NLPnode>  nodes_wsd; // sentence analized 
-	private List<Integer>  synsets;   // index of nodes_wsds that contain verbs
+	private List<Integer>  synsets;   // index of nodes_wsds that contain nouns,verbs,adverbs
 	
 	public int hashCode() {
 	   return Objects.hashCode(name);
@@ -34,6 +35,7 @@ public class ExampleFrame {
 		this.name = n;
 		this.content = l;
 		this.frame = f;
+		this.n_verbs = 0;
 		this.nodes_wsd = new ArrayList<NLPnode>();
 		this.synsets = new ArrayList<Integer>();
 	}
@@ -52,6 +54,10 @@ public class ExampleFrame {
     
     public String getCtx() {
         return this.ctx;
+    }
+    
+    public int getNVerbs() {
+        return this.n_verbs;
     }
     
     public void setCtx(String ctNum) {
@@ -84,7 +90,7 @@ public class ExampleFrame {
     	List<Integer> newval = new ArrayList<Integer>();
     	
     	// if multiple verbs check if are auxiliary forms
-    	if (this.synsets.size() > 1) {
+    	if (this.n_verbs > 1) {
 	    	for (int j = 0; j < this.synsets.size(); j++) {
 	    		String speach = this.nodes_wsd.get(this.synsets.get(j)).getPos();
 	    		String lemma = this.nodes_wsd.get(this.synsets.get(j)).getLemma();
@@ -122,6 +128,7 @@ public class ExampleFrame {
 				case "VBP" : // Verb, non­3rd person singular present
 				case "VBZ" : // Verb, 3rd person singular present
 				case "MD"  : // Modal
+					this.n_verbs++;
 				//	
 			 	case "NN" :  // Noun, singular or mass
 	            case "NNS" : // Noun, plural
