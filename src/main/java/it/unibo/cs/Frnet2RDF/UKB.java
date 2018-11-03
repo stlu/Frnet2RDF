@@ -106,7 +106,7 @@ public class UKB  {
 						String scoreString = val.substring(m.start(2), m.end(2));
 						//System.out.println(" ===> group: "+m.group()+ " synID : "+synId+" score: "+scoreString);
 						
-						Double score = Double.parseDouble(scoreString);
+						final Double score = parseDouble(scoreString);
 
 						String iri_denotes = wn30 ? SynsetIDtoURI
 								.synsetId30toIRI(synId) : wn31 ? SynsetIDtoURI
@@ -146,6 +146,17 @@ public class UKB  {
 		}
 	}
 
+	// Function to clean data
+	private static Double parseDouble(String x) {
+	    Double a;
+	    try {
+	        a = Double.parseDouble(x);
+	    } catch (Exception NumberFormatException) {
+	        a = (double) 1;
+	    }
+	    return a;
+	}
+	
 	private static int getWordId(String line) {
 		String[] fs = line.split(" ");
 		String stringNumber = fs[1].replace('w', '0');
