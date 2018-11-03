@@ -364,7 +364,7 @@ step5() {
   fi
 
   `cd "$FRNET2RDF_HOME" >/dev/null; `
-  JAVA_OPT_LOAD="-Xmx4G -Xms1G"
+  JAVA_OPT_LOAD="-Xmx6G -Xms1G"
 
 # STEP5 - analize Framenet's annotations with UKB and make a Word 
 #         Sense Disambiguation with Frnet2RDF
