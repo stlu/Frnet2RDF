@@ -22,7 +22,7 @@ public class UKB  {
 	private Pattern resUKB = Pattern.compile("(\\S*)/(\\S*)"); // 
 	private Pattern resultPattern = Pattern.compile(" ");
 	
-	private String flags = " --ppr --allranks";  // --nopos
+	private String flags = " --minput --ppr --allranks";  // --nopos
 	private String tempFile;
 	private String defaultNamespacePrefixData;
 	private boolean wn30 = false, wn31 = false;

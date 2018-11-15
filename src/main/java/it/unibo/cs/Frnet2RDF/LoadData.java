@@ -4,6 +4,7 @@ import it.unibo.cs.Frnet2RDF.utils.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,9 @@ public class LoadData {
 	            "  ?feSub a earmark:PointerRange ." + 
 	            "  ?feSub earmark:refersTo ?class ." +
 				"  ?class earmark:hasContent ?label ." +
-		    "  ?feSub ontology:denotes ?frame . } ";  //LIMIT 15" ;
+		        "  ?feSub ontology:denotes ?frame . } ";  //LIMIT 15" ;
+		 //		"?feSub ontology:denotes ?frame ."+
+		 //"filter regex(str(?class), \"example4110768\") } ";  //LIMIT 15" ;
 
 		if (conf.getInputType().equals(ReadConfiguration.InputType.SPARQL_ENDPOINT)) {
 			logger.info("Applaying before rule {}", queryString);
@@ -81,6 +84,7 @@ public class LoadData {
 			      RDFNode framePropertyNode=soln.get("frame");
 			      
 			      // set data to elaborate
+
 			      String modifiedlabel = labelPropertyNode.toString().replaceAll("@en", "");
 			      prc.add(new ExampleFrame(classPropertyNode.toString(), modifiedlabel, framePropertyNode.toString()));
 			    }
@@ -152,7 +156,8 @@ public class LoadData {
 		for (ExampleFrame frame : exfr) {
 			System.out.println(">>>>>>>>>>>\n"+frame.getContent());
 			String last = frame.getName();
-			System.out.println("\t"+last+"\n");
+			System.out.println("\t"+last);
+			System.out.println("\t sinsetsSize "+frame.getSynsets().size());
 			
 			ntot_synsets += frame.getSynsets().size();
 			
@@ -178,10 +183,11 @@ public class LoadData {
 				Literal lini = out.createTypedLiteral(ini);
 				Literal lend = out.createTypedLiteral(end);
 				
-				Map<String, Double> sortvalues = frame.getNodeNum(ind).getSenseOrder();
+				Map<String, Double> sortvalues = frame.getNodeNum(ind).getSenseOrder();	
 				sortvalues.forEach( (wn,dval) -> {
 					
 					Resource resource=out.createResource(last +"-"+label+"-"+ii[0]);
+					//System.out.println("++ Resource "+resource.toString());
                     
 					resource.addProperty(RDF.type, ptrRange);
 					resource.addProperty(RDFS.label, label, "en");
@@ -212,7 +218,22 @@ public class LoadData {
 			});
 		}
 		System.out.println("##### TOT synsets found UKB "+ntot_synsets);
+		FileOutputStream fout = new FileOutputStream(new File(conf.getOutputFile()));
+		try {	
+			out.write(fout, conf.getOutputFormat());
+		} finally {
+			try {
+				fout.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try { 
+				fout.close();
+			} catch (IOException ioe) {
+			     System.out.println("Error in closing the Stream");
+		    }
+		}
+		//out.write(new FileOutputStream(new File(conf.getOutputFile())), conf.getOutputFormat());
 		
-		out.write(new FileOutputStream(new File(conf.getOutputFile())), conf.getOutputFormat());
 	}
 }
